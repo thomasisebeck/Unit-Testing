@@ -5,12 +5,7 @@ export enum Operations {
     DIVIDE
 }
 
-export enum Type {
-    OPERAND,
-    OPERATOR
-}
-
 export type ComputationStack = {
-    type: Type,
-    value: Operations | number
+    value: string
+    operation: Operations | null
 }

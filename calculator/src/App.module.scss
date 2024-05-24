@@ -29,7 +29,7 @@ $border-rad: 7px;
 
 .container {
 
-  min-width: 300px;
+
   border-radius: $border-rad;
 
   .screen {
@@ -44,12 +44,14 @@ $border-rad: 7px;
 
     div:nth-child(1){
       color: $light-grey;
+      height: 19.2px;
     }
 
     div:nth-child(2) {
       margin-top: 5px;
       font-weight: bold;
       font-size: 2rem;
+      height: 39.2px;
       color: $grey;
     }
 
@@ -86,12 +88,15 @@ $border-rad: 7px;
 
     div  {
       //buttons
-      padding: 20px 0;
       background-color: $button;
-      text-align: center;
       border-radius: 3px;
       font-size: 1.2rem;
       cursor: pointer;
+      height: calc(100vh / 12);
+      aspect-ratio: 1/1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     div:hover {

@@ -1,5 +1,6 @@
 import Calculator from "../logic/logic";
 import {describe, it, expect} from "@jest/globals";
+import {ComputationStack, Operations} from "../logic/operations.ts";
 
 describe("test logic class", () => {
     it("add", () => {
@@ -9,7 +10,7 @@ describe("test logic class", () => {
         expect(c.add("1E", "2D")).toBe("4B");
 
         //1244 + 2074 = 3318
-        expect(c.add("4DC","81A")).toBe("CF6")
+        expect(c.add("4DC", "81A")).toBe("CF6")
     })
 
     it("subtract", () => {
@@ -38,7 +39,6 @@ describe("test logic class", () => {
         //10 / 2 = 5
         expect(c.divide("A", "2")).toBe("5");
 
-
         //240 / 20 = 12
         expect(c.divide("F0", "14")).toBe("C");
 
@@ -48,6 +48,39 @@ describe("test logic class", () => {
             .toThrow("undefined")
     });
 
+    it("get result", () => {
+        const stack: ComputationStack[] = [
+            {
+                operation: null,
+                value: "AB" //171
+            },
+            {
+                operation: Operations.ADD,
+                value: "CD" //205
+            },
+            {
+                operation: Operations.ADD,
+                value: "CD" //205
+            },
+            {
+                operation: Operations.SUBTRACT,
+                value: "BE" //190
+            },
+            {
+                operation: Operations.DIVIDE,
+                value: "4" //4
+            },
+            {
+                operation: Operations.MULTIPLY,
+                value: "7E" //126
+            },
+        ];
+
+        //result = 12 222
+        const c = new Calculator();
+
+        expect(c.getResult(stack)).toBe("2FBE");
+    })
 })
 
 

@@ -1,7 +1,49 @@
 import './operations.ts'
+import {ComputationStack, Operations} from "./operations.ts";
 
-class Calculator {
+export class Calculator {
     constructor() {
+    }
+
+
+    public getResult(stack: ComputationStack[]): string {
+        
+        if (stack.length == 0)
+            throw "Cannot calculate with len 0";
+
+        console.log(stack[0].value)
+        console.log(stack[0].operation)
+        console.log(stack[1].value)
+        console.log(stack[1].operation)
+
+        if (stack[stack.length- 1].operation != null)
+            throw "Calculation must end with an empty operation";
+        
+        let result: string = stack[0].value; 
+        
+        for (let i = 1; i < stack.length; i++) {
+            const c : string =  stack[i].value;
+            const op : Operations | null = stack[i - 1].operation;
+            
+           switch (op) {
+               case Operations.ADD:
+                   result = this.add(result, c);
+                   break;
+               case Operations.DIVIDE:
+                   result = this.divide(result, c);
+                   break;
+               case Operations.MULTIPLY:
+                   result = this.multiply(result, c);
+                   break;
+               case Operations.SUBTRACT:
+                   result = this.subtract(result, c);
+                   break;
+               default:
+                   throw "undefined operation"
+           }
+        }
+
+        return result;
     }
 
     public add(first: string, second: string): string {
@@ -19,7 +61,7 @@ class Calculator {
     public divide(first: string, second: string) : string {
         if (second == "0")
             throw "undefined";
-        return this.toHex(this.toDec(first) / this.toDec(second));
+        return this.toHex(Math.floor(this.toDec(first) / this.toDec(second)));
     }
 
     private toHex(dec: number)  : string {
@@ -36,7 +78,6 @@ class Calculator {
             console.log(remainder);
             result = hexDigits[remainder] + result;
             dec = Math.floor(dec / 16);
-            console.log("Iterating...");
         }
         return result;
     }
