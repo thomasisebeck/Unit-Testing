@@ -17,11 +17,11 @@ describe('test database', () => {
         const canPing = await pingDB(client);
         expect(canPing).toBe(true);
     })
-    it('can insert into database',  () => {
+    it('can insert into database',  async () => {
         const record = {
             'equation': '1 + 23 + 34433 = 3423'
         }
-        const result =  addToHistory(record);
+        const result = await addToHistory(client, record);
         expect(result).toBe(true);
 
         const records = [{
@@ -29,12 +29,12 @@ describe('test database', () => {
         }, {
             'equation': '1 + 32 + 322 = 1232'
         }];
-        const result2 =  addToHistory(record);
+        const result2 = await addToHistory(client, record);
         expect(result).toBe(true);
     })
 
-    it('can retrieve history',  () => {
-        const result =  getHistory();
+    it('can retrieve history',  async () => {
+        const result = await getHistory(client);
         if (result == null)
             return fail("result is null")
 
@@ -44,9 +44,9 @@ describe('test database', () => {
         expect(result[0].equation).to.eq("1 + 23 + 34433 = 3423")
     })
 
-    it('can delete all',  () => {
-        clearHistory();
-        const result = getHistory();
+    it('can delete all',  async () => {
+        await clearHistory(client);
+        const result = await getHistory(client);
         expect(result.length).toEqual(0);
     })
 })
