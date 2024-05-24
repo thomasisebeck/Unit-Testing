@@ -4,11 +4,11 @@ import {MongoClient} from "mongodb";
 describe('test database', () => {
     let client: MongoClient;
 
-    beforeEach( async () => {
+    beforeAll( async () => {
         client = await connectClient();
     })
 
-    afterEach( async () => {
+    afterAll( async () => {
         if (client)
             await closeClient(client);
     })
@@ -29,8 +29,8 @@ describe('test database', () => {
         }, {
             'equation': '1 + 32 + 322 = 1232'
         }];
-        const result2 = await addToHistory(client, record);
-        expect(result).toBe(true);
+        const result2 = await addToHistory(client, records);
+        expect(result2).toBe(true);
     })
 
     it('can retrieve history',  async () => {
@@ -39,9 +39,7 @@ describe('test database', () => {
             return fail("result is null")
 
         expect(result.length).toEqual(3);
-
-        // @ts-ignore
-        expect(result[0].equation).to.eq("1 + 23 + 34433 = 3423")
+        expect(result[0].equation).toBe("1 + 23 + 34433 = 3423")
     })
 
     it('can delete all',  async () => {
