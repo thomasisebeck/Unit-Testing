@@ -8,19 +8,26 @@ class Calculator {
         return this.toHex(this.toDec(first) + this.toDec(second));
     }
 
-    // public subtract(first: string, second: string) : string {
-    //     return "";
-    // }
-    //
-    // public multiply(first: string, second: string) : string {
-    //     return "";
-    // }
-    //
-    // public divide(first: string, second: string) : string {
-    //     return "";
-    // }
+    public subtract(first: string, second: string) : string {
+        return this.toHex(this.toDec(first) - this.toDec(second));
+    }
 
-    private toHex(dec: number): string {
+    public multiply(first: string, second: string) : string {
+        return this.toHex(this.toDec(first) * this.toDec(second));
+    }
+
+    public divide(first: string, second: string) : string {
+        if (second == "0")
+            throw "undefined";
+        return this.toHex(this.toDec(first) / this.toDec(second));
+    }
+
+    private toHex(dec: number)  : string {
+        if (isNaN(dec))
+            throw new Error("Not a number");
+        if (dec < 0)
+            throw new Error("Cannot convert negatives");
+
         let result = "";
 
         const hexDigits = "0123456789ABCDEF";
@@ -29,11 +36,12 @@ class Calculator {
             console.log(remainder);
             result = hexDigits[remainder] + result;
             dec = Math.floor(dec / 16);
+            console.log("Iterating...");
         }
         return result;
     }
 
-    private toDec(hex: string): number {
+    private toDec(hex: string)  : number {
         if (hex === undefined || hex.length === 0)
             throw "invalid hex number"
 
@@ -46,7 +54,7 @@ class Calculator {
             const position = hexDigits.indexOf(currentCar);
             //goes up in multiples of 16 each time
             //it gets higher up
-            value = 16 * value + position;
+            value = 16*value + position;
         }
         return value;
     }
