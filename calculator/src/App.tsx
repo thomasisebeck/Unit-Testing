@@ -1,6 +1,10 @@
 import s from './App.module.scss'
+import {useState} from "react";
 
 function App() {
+
+    [stack, setStack] = useState<ComputationStack>([]);
+
     return (
         <div className={s.outer}>
         <div className={s.container}>
