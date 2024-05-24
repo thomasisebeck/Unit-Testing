@@ -1,14 +1,20 @@
 import { pingDB, getHistory, clearHistory, addToHistory } from '../database'
-
+import { connectClient, closeClient } from '../connection'
+import {MongoClient} from "mongodb";
 describe('test database', () => {
-    beforeEach( () => {
+    let client: MongoClient;
+
+    beforeEach( async () => {
+        client = await connectClient();
     })
 
-    afterEach( () => {
+    afterEach( async () => {
+        if (client)
+            await closeClient(client);
     })
 
-    it('can ping the database',  () => {
-        const canPing =   pingDB();
+    it('can ping the database',  async () => {
+        const canPing = await pingDB(client);
         expect(canPing).toBe(true);
     })
     it('can insert into database',  () => {
