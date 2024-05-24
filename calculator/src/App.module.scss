@@ -1,42 +1,107 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+$off-white: #fcfcfc;
+$beige: #fff0d2;
+$lemon: #ffffdd;
+$orange: #f1af60;
+$grey: #3f3c39;
+$button: #f5ce9f;
+$button-hover: #f6dbb8;
+$light-grey: #8a837b;
+$inner-padding: 3px;
+$outer-padding: 7px;
+$border-rad: 7px;
+
+@font-face {
+  font-family: 'inter';
+  src: url("fonts/inter.ttf");
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+:root {
+  font-family: 'inter', serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.outer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+
+  min-width: 300px;
+  border-radius: $border-rad;
+
+  .screen {
+    padding: 15px 15px 5px;
+    background-color: $beige;
+    border-bottom: 3px solid $grey;
+    border-radius: $border-rad $border-rad 0 0;
+
+    div {
+      text-align: right;
+    }
+
+    div:nth-child(1){
+      color: $light-grey;
+    }
+
+    div:nth-child(2) {
+      margin-top: 5px;
+      font-weight: bold;
+      font-size: 2rem;
+      color: $grey;
+    }
+
   }
-  to {
-    transform: rotate(360deg);
+}
+
+.body {
+  background-color: $lemon;
+  border-radius: 0 0 $border-rad $border-rad;
+
+  .tools {
+    fill: $orange;
+    display: flex;
+    justify-content: space-between;
+    padding: $outer-padding;
+
+    img:nth-child(1){
+      width: 23px;
+    }
+
+    img:nth-child(2) {
+      width: 30px;
+    }
+  }
+
+  .buttons {
+    font-weight: bold;
+    padding: $outer-padding;
+    //rows
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-gap: 7px;
+    grid-row-gap: 7px;
+
+    div  {
+      //buttons
+      padding: 20px 0;
+      background-color: $button;
+      text-align: center;
+      border-radius: 3px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    div:hover {
+      background-color: $button-hover;
+    }
+
+    div div:nth-last-child(1) {
+      background-color: $orange;
+    }
+
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
