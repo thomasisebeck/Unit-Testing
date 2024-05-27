@@ -10,14 +10,26 @@ function App() {
     const [lastValue, setLastValue] = useState("");
     const [display, setDisplay] = useState("");
     const [lastComputationDisplay, setlastComputationDisplay] = useState("");
+    const [mustClearOnNextClick, setMustClearOnNextClick] = useState(false);
+
     const setLastHexValue = (val: string) => {
+        if (mustClearOnNextClick) {
+            setMustClearOnNextClick(false);
+            setDisplay(val)
+            setLastValue(val)
+            return ;
+        }
+
         setDisplay(display + val);
         setLastValue(lastValue + val);
     }
 
     const computeStack = () => {
+
         const c = new Calculator();
         setlastComputationDisplay(display + " =");
+        setMustClearOnNextClick(true);
+
         try {
             setDisplay(c.getResult([...stack, { value: lastValue, operation: null}]));
         } catch (e) {
