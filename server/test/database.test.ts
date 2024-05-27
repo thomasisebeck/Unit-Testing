@@ -46,19 +46,31 @@ describe('test database', () => {
         if (result == null)
             return fail("result is null")
 
-        console.log(result);
-
         //last inserted item
-        expect(result['equation']).toBe('1 + 32 + 322 = 1232');
+        expect(result.document['equation']).toBe('1 + 32 + 322 = 1232');
+
+        expect(result.canRetrieveMore).toBe(true);
 
         result = await getHistory(client);
         if (result == null)
             return fail("result is null")
 
         //last inserted item
-        expect(result['equation']).toBe(
+        expect(result.document['equation']).toBe(
            '1 + 43 + 34433 = 3423'
         )
+
+        expect(result.canRetrieveMore).toBe(true);
+
+         result = await getHistory(client);
+        if (result == null)
+            return fail("result is null")
+
+        expect(result.document['equation']).toBe(
+            '1 + 23 + 34433 = 3423'
+        )
+
+        expect(result.canRetrieveMore).toBe(false);
 
         const records = [{
             'equation': '1 + 43 + 34433 = 3423'
@@ -73,6 +85,6 @@ describe('test database', () => {
     it('can delete all',  async () => {
         await clearHistory(client);
         const result = await getHistory(client);
-        expect(result.length).toEqual(0);
+        expect(result).toBe(null);
     })
 })
