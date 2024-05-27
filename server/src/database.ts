@@ -1,4 +1,4 @@
-import {MongoClient, Document, WithId} from "mongodb";
+import {MongoClient, Document, WithId, InsertOneResult, InsertManyResult} from "mongodb";
 import dotenv from 'dotenv'
 
 dotenv.config();
@@ -14,30 +14,34 @@ export async function pingDB(client: MongoClient): Promise<boolean> {
     }
 }
 
-
-export async function addToHistory(client: MongoClient, record: {equation: string}[]): Promise<boolean>;
-export async function addToHistory(client: MongoClient, record: {equation: string}): Promise<boolean>;
-export async function addToHistory(client: MongoClient, record: unknown): Promise<boolean> {
+export async function addToHistory(client: MongoClient, record: unknown) {
     try {
         if (Array.isArray(record)) {
-            await client.db("history").collection(process.env.COLLECTION!).insertMany(record as { equation: string }[]);
+               return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertMany(record as { equation: string }[])
         } else {
-            await client.db("history").collection(process.env.COLLECTION!).insertOne(record as { equation: string });
+            return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertOne(record as { equation: string })
         }
-        return true;
     } catch (e) {
         console.log(e);
         return false;
     }
 }
 
-export async function getHistory(client: MongoClient): Promise<WithId<Document>[]> {
-    const documents =  await client.db("history").collection(process.env.COLLECTION!).find({}).toArray();
-    console.log(documents);
-    return documents;
+interface HistoryDocument extends Document {
+    equation?: string
+}
+
+export async function getHistory(client: MongoClient): Promise<HistoryDocument>  {
+    const documents =  await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).find({}).toArray();
+    if (documents.length == 0)
+        return [];
+
+    const lastHistoryItem = documents[documents.length - 1];
+    await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).deleteOne({_id: lastHistoryItem._id});
+    return lastHistoryItem;
 }
 
 export async function clearHistory(client: MongoClient) {
-    await client.db("history").collection(process.env.COLLECTION!).deleteMany({});
+    await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).deleteMany({});
     return "success";
 }

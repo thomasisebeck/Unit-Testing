@@ -1,6 +1,7 @@
-import { pingDB, getHistory, clearHistory, addToHistory } from '../database'
-import { connectClient, closeClient } from '../connection'
-import {MongoClient} from "mongodb";
+import { pingDB, getHistory, clearHistory, addToHistory } from '../src/database'
+import { connectClient, closeClient } from '../src/connection'
+import {Document, MongoClient, WithId} from "mongodb";
+import any = jasmine.any;
 describe('test database', () => {
     let client: MongoClient;
 
@@ -22,7 +23,11 @@ describe('test database', () => {
             'equation': '1 + 23 + 34433 = 3423'
         }
         const result = await addToHistory(client, record);
-        expect(result).toBe(true);
+
+        if (result == false)
+            fail("can't insert");
+
+        expect(result.acknowledged).toBe(true);
 
         const records = [{
             'equation': '1 + 43 + 34433 = 3423'
@@ -30,16 +35,39 @@ describe('test database', () => {
             'equation': '1 + 32 + 322 = 1232'
         }];
         const result2 = await addToHistory(client, records);
-        expect(result2).toBe(true);
+        if (result2 == false)
+            fail("can't insert")
+
+        expect(result2.acknowledged).toBe(true);
     })
 
     it('can retrieve history',  async () => {
-        const result = await getHistory(client);
+        let result = await getHistory(client);
         if (result == null)
             return fail("result is null")
 
-        expect(result.length).toEqual(3);
-        expect(result[0].equation).toBe("1 + 23 + 34433 = 3423")
+        console.log(result);
+
+        //last inserted item
+        expect(result['equation']).toBe('1 + 32 + 322 = 1232');
+
+        result = await getHistory(client);
+        if (result == null)
+            return fail("result is null")
+
+        //last inserted item
+        expect(result['equation']).toBe(
+           '1 + 43 + 34433 = 3423'
+        )
+
+        const records = [{
+            'equation': '1 + 43 + 34433 = 3423'
+        }, {
+            'equation': '1 + 32 + 322 = 1232'
+        }];
+        const result2 = await addToHistory(client, records);
+        expect(result2).not.toBe(false);
+
     })
 
     it('can delete all',  async () => {
