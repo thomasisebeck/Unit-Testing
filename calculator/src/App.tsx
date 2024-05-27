@@ -3,7 +3,6 @@ import {useState} from "react";
 import {ComputationStack, Operations} from "./logic/operations.ts";
 import Calculator from "./logic/logic.ts";
 
-
 function App() {
 
     const [stack, setStack] = useState<ComputationStack[]>([]);
@@ -11,8 +10,12 @@ function App() {
     const [display, setDisplay] = useState("");
     const [lastComputationDisplay, setlastComputationDisplay] = useState("");
     const [mustClearOnNextClick, setMustClearOnNextClick] = useState(false);
+    const [canSave, setCanSave] = useState(false);
+    const [retrieveEnabled, setRetrieveEnabled] = useState(false);
 
     const setLastHexValue = (val: string) => {
+        setCanSave(false);
+
         if (mustClearOnNextClick) {
             setMustClearOnNextClick(false);
             setDisplay(val)
@@ -32,6 +35,7 @@ function App() {
 
         try {
             setDisplay(c.getResult([...stack, { value: lastValue, operation: null}]));
+            setCanSave(true);
         } catch (e) {
             setlastComputationDisplay("")
             setDisplay("Invalid")
@@ -71,8 +75,70 @@ function App() {
         setLastValue("");
     }
 
+    function clearDisplayDelayed() {
+        setTimeout(() => {
+            setDisplay("")
+            setlastComputationDisplay("")
+            setCanSave(false);
+        }, 1000);
+    }
+
+    const saveToMemory = async () => {
+
+        setStack([]);
+
+        fetch(`http://localhost:3000/history`, {
+            method: 'POST',
+            body: JSON.stringify({
+                top: lastComputationDisplay,
+                bottom: display
+            }),
+            headers: {
+                'Content-type': 'application/json',
+                'Accept' : 'application/json'
+            }
+        }).then(response => {
+            if (response.ok) {
+                setDisplay("SUCCESS!")
+                setMustClearOnNextClick(false);
+                clearDisplayDelayed();
+                setRetrieveEnabled(true);
+            } else {
+                setDisplay("ERROR!")
+            }
+        })
+    }
+
+    const getLastHistory = async ()  => {
+        fetch('http://localhost:3000/history', {
+            method: 'GET'
+        }).then(async response => {
+            if (response.ok) {
+                const toSet = await response.json();
+                console.log(toSet);
+
+                if (toSet.hasHistory == true) {
+                    setlastComputationDisplay(toSet.history.document.top)
+                    setDisplay(toSet.history.document.bottom)
+                    setMustClearOnNextClick(false);
+                    console.log("TOSET")
+                    console.log(toSet);
+                    setRetrieveEnabled(toSet.history.canRetrieveMore);
+                } else {
+                    setlastComputationDisplay("")
+                    setDisplay("NO HISTORY")
+                    clearDisplayDelayed();
+                }
+            } else {
+                setlastComputationDisplay("")
+                setDisplay("ERROR!")
+                clearDisplayDelayed();
+            }
+        })
+    }
+
     return (
-        <div className={s.outer}>
+       <div className={s.outer}>
             <div className={s.container}>
                 <div className={s.screen}>
                     <div>{lastComputationDisplay}</div>
@@ -81,14 +147,11 @@ function App() {
 
                 <div className={s.body}>
                     <div className={s.tools}>
-                        <img src={'history.svg'}/>
-                        <img src={'backspace.svg'}/>
+                        <img src={'backspace.svg'} onClick={() => setDisplay(display.substring(0, display.length - 1))}/>
                     </div>
                     <div className={s.buttons}>
-                        <div>M+</div>
-                        <div>M-</div>
-                        <div>MC</div>
-                        <div>MR</div>
+                        <div className={[s.large, !canSave ? s.disabled : ''].join(' ')} onClick={() => canSave && saveToMemory()}>remember</div>
+                        <div className={[s.large, !retrieveEnabled ? s.disabled : ''].join(' ')} onClick={() => getLastHistory()}>recall</div>
 
                         <div onClick={() => setLastHexValue("A")}>A</div>
                         <div onClick={() => setLastHexValue("B")}>B</div>
@@ -99,6 +162,7 @@ function App() {
                             setDisplay("");
                             setStack([]);
                             setlastComputationDisplay("");
+                            setCanSave(false);
                         }}>clear
                         </div>
 
@@ -123,9 +187,9 @@ function App() {
                         <div onClick={() => setLastHexValue("3")}>3</div>
                         <div onClick={() => addToStack(Operations.DIVIDE)}>/</div>
 
-                        <div></div>
+                        <div className={s.disabled}></div>
                         <div onClick={() => setLastHexValue("0")}>0</div>
-                        <div></div>
+                        <div className={s.disabled}></div>
                         <div onClick={() => computeStack()}>=</div>
                     </div>
                 </div>

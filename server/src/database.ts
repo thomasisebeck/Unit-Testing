@@ -17,9 +17,15 @@ export async function pingDB(client: MongoClient): Promise<boolean> {
 export async function addToHistory(client: MongoClient, record: unknown) {
     try {
         if (Array.isArray(record)) {
-               return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertMany(record as { equation: string }[])
+            return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertMany(record as {
+                top: string,
+                bottom: string
+            }[])
         } else {
-            return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertOne(record as { equation: string })
+            return await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).insertOne(record as {
+                top: string,
+                bottom: string
+            })
         }
     } catch (e) {
         console.log(e);
@@ -31,14 +37,22 @@ interface HistoryDocument extends Document {
     equation?: string
 }
 
-export async function getHistory(client: MongoClient): Promise<HistoryDocument>  {
-    const documents =  await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).find({}).toArray();
+interface HistoryResponse {
+    canRetrieveMore: boolean,
+    document: HistoryDocument
+}
+
+export async function getHistory(client: MongoClient): Promise<HistoryResponse | null> {
+    const documents = await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).find({}).toArray();
     if (documents.length == 0)
-        return [];
+        return null;
 
     const lastHistoryItem = documents[documents.length - 1];
     await client.db(process.env.DATABASE).collection(process.env.COLLECTION!).deleteOne({_id: lastHistoryItem._id});
-    return lastHistoryItem;
+    return {
+        canRetrieveMore: documents.length > 1,
+        document: lastHistoryItem
+    };
 }
 
 export async function clearHistory(client: MongoClient) {
