@@ -42,7 +42,7 @@ $border-rad: 7px;
       text-align: right;
     }
 
-    div:nth-child(1){
+    div:nth-child(1) {
       color: $light-grey;
       height: 19.2px;
     }
@@ -68,7 +68,7 @@ $border-rad: 7px;
     justify-content: flex-end;
     padding: $outer-padding;
 
-    img:nth-child(1){
+    img:nth-child(1) {
       width: 23px;
     }
 
@@ -86,7 +86,7 @@ $border-rad: 7px;
     grid-column-gap: 7px;
     grid-row-gap: 7px;
 
-    div  {
+    div {
       //buttons
       background-color: $button;
       border-radius: 3px;
@@ -116,7 +116,7 @@ $border-rad: 7px;
       background-color: $button-hover;
     }
 
-     .disabled {
+    .disabled {
       color: rgba(0, 0, 0, 0.44);
     }
 

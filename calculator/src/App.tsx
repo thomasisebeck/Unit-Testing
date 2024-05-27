@@ -20,7 +20,7 @@ function App() {
             setMustClearOnNextClick(false);
             setDisplay(val)
             setLastValue(val)
-            return ;
+            return;
         }
 
         setDisplay(display + val);
@@ -34,7 +34,7 @@ function App() {
         setMustClearOnNextClick(true);
 
         try {
-            setDisplay(c.getResult([...stack, { value: lastValue, operation: null}]));
+            setDisplay(c.getResult([...stack, {value: lastValue, operation: null}]));
             setCanSave(true);
         } catch (e) {
             setlastComputationDisplay("")
@@ -95,7 +95,7 @@ function App() {
             }),
             headers: {
                 'Content-type': 'application/json',
-                'Accept' : 'application/json'
+                'Accept': 'application/json'
             }
         }).then(response => {
             if (response.ok) {
@@ -109,7 +109,7 @@ function App() {
         })
     }
 
-    const getLastHistory = async ()  => {
+    const getLastHistory = async () => {
         fetch('http://localhost:3000/history', {
             method: 'GET'
         }).then(async response => {
@@ -138,7 +138,7 @@ function App() {
     }
 
     return (
-       <div className={s.outer}>
+        <div className={s.outer}>
             <div className={s.container}>
                 <div className={s.screen}>
                     <div>{lastComputationDisplay}</div>
@@ -147,11 +147,16 @@ function App() {
 
                 <div className={s.body}>
                     <div className={s.tools}>
-                        <img src={'backspace.svg'} onClick={() => setDisplay(display.substring(0, display.length - 1))}/>
+                        <img src={'backspace.svg'}
+                             onClick={() => setDisplay(display.substring(0, display.length - 1))}/>
                     </div>
                     <div className={s.buttons}>
-                        <div className={[s.large, !canSave ? s.disabled : ''].join(' ')} onClick={() => canSave && saveToMemory()}>remember</div>
-                        <div className={[s.large, !retrieveEnabled ? s.disabled : ''].join(' ')} onClick={() => getLastHistory()}>recall</div>
+                        <div className={[s.large, !canSave ? s.disabled : ''].join(' ')}
+                             onClick={() => canSave && saveToMemory()}>remember
+                        </div>
+                        <div className={[s.large, !retrieveEnabled ? s.disabled : ''].join(' ')}
+                             onClick={() => getLastHistory()}>recall
+                        </div>
 
                         <div onClick={() => setLastHexValue("A")}>A</div>
                         <div onClick={() => setLastHexValue("B")}>B</div>

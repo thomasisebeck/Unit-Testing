@@ -1,5 +1,5 @@
 import Calculator from "../logic/logic";
-import {describe, it, expect} from "@jest/globals";
+import {describe, expect, it} from "@jest/globals";
 import {ComputationStack, Operations} from "../logic/operations.ts";
 
 describe("test logic class", () => {
@@ -51,7 +51,7 @@ describe("test logic class", () => {
     it("get result", () => {
         const stack: ComputationStack[] = [
             {
-                operation: null,
+                operation: Operations.ADD,
                 value: "AB" //171
             },
             {
@@ -59,19 +59,19 @@ describe("test logic class", () => {
                 value: "CD" //205
             },
             {
-                operation: Operations.ADD,
+                operation: Operations.SUBTRACT,
                 value: "CD" //205
             },
             {
-                operation: Operations.SUBTRACT,
+                operation: Operations.DIVIDE,
                 value: "BE" //190
             },
             {
-                operation: Operations.DIVIDE,
+                operation: Operations.MULTIPLY,
                 value: "4" //4
             },
             {
-                operation: Operations.MULTIPLY,
+                operation: null,
                 value: "7E" //126
             },
         ];
