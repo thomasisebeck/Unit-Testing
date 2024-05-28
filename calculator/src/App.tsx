@@ -141,8 +141,8 @@ function App() {
         <div className={s.outer}>
             <div className={s.container}>
                 <div className={s.screen}>
-                    <div>{lastComputationDisplay}</div>
-                    <div>{display}</div>
+                    <div id={"lastComputationDisplay"}>{lastComputationDisplay}</div>
+                    <div id={"display"}>{display}</div>
                 </div>
 
                 <div className={s.body}>

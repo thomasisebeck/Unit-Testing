@@ -44,8 +44,6 @@ app.post("/history", async (req, res) => {
     if (!client)
         return res.status(500).send("Client can't connect");
 
-    console.log("POSTING...")
-
     try {
         res.status(200).send(await addToHistory(client, req.body));
     } catch (e) {
