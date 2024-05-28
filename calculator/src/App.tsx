@@ -12,6 +12,8 @@ function App() {
     const [mustClearOnNextClick, setMustClearOnNextClick] = useState(false);
     const [canSave, setCanSave] = useState(false);
     const [retrieveEnabled, setRetrieveEnabled] = useState(false);
+    const [isAngry, setIsAngry] = useState(false);
+    const [strokeCount, setStrokeCount] = useState(0);
 
     const setLastHexValue = (val: string) => {
         setCanSave(false);
@@ -38,10 +40,20 @@ function App() {
             setCanSave(true);
         } catch (e) {
             setlastComputationDisplay("")
-            setDisplay("Invalid")
+            setIsAngry(true);
+            setDisplay("NO!");
+
+            setStrokeCount(0);
+            const aud = new Audio('meow.mp3');
+            aud.play()
+
             setTimeout(() => {
                 setDisplay("")
             }, 1000);
+
+            setTimeout(() => {
+                setIsAngry(false);
+            }, 2000);
         }
     }
 
@@ -137,10 +149,26 @@ function App() {
         })
     }
 
+    const handleStroke = () => {
+        setStrokeCount(strokeCount + 1);
+        console.log(strokeCount);
+        if (strokeCount > 15) {
+            setStrokeCount(0);
+            const aud = new Audio('purr.mp3');
+            aud.play();
+        }
+    }
+
     return (
         <div className={s.outer}>
-            <div className={s.container}>
-                <div className={s.screen}>
+            <div className={[s.container, isAngry ? s.angry : '' ].join(' ')}>
+                <div className={s.ears}>
+                    <div className={s.earsPink}></div>
+                    <div className={s.earsInner}></div>
+                </div>
+                <div className={s.screen}
+                    onMouseOut={() => handleStroke()}>
+
                     <div id={"lastComputationDisplay"}>{lastComputationDisplay}</div>
                     <div id={"display"}>{display}</div>
                 </div>
