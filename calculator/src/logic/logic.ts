@@ -11,10 +11,6 @@ export class Calculator {
         if (stack.length == 0)
             throw "Cannot calculate with len 0";
 
-        console.log(stack[0].value)
-        console.log(stack[0].operation)
-        console.log(stack[1].value)
-        console.log(stack[1].operation)
 
         if (stack[stack.length - 1].operation != null)
             throw "Calculation must end with an empty operation";
@@ -37,9 +33,6 @@ export class Calculator {
                     break;
                 case Operations.SUBTRACT:
                     result = this.subtract(result, c);
-                    break;
-                default:
-                    throw "undefined operation"
             }
         }
 
@@ -64,9 +57,7 @@ export class Calculator {
         return this.toHex(Math.floor(this.toDec(first) / this.toDec(second)));
     }
 
-    private toHex(dec: number): string {
-        if (isNaN(dec))
-            throw new Error("Not a number");
+    public toHex(dec: number): string {
         if (dec < 0)
             throw new Error("Cannot convert negatives");
 
@@ -75,15 +66,14 @@ export class Calculator {
         const hexDigits = "0123456789ABCDEF";
         while (dec > 0) {
             const remainder = dec % 16;
-            console.log(remainder);
             result = hexDigits[remainder] + result;
             dec = Math.floor(dec / 16);
         }
         return result;
     }
 
-    private toDec(hex: string): number {
-        if (hex === undefined || hex.length === 0)
+    public toDec(hex: string): number {
+        if (hex.length === 0)
             throw "invalid hex number"
 
         const hexDigits = "0123456789ABCDEF";
@@ -93,6 +83,8 @@ export class Calculator {
         for (let i = 0; i < hex.length; i++) {
             const currentCar = hex[i];
             const position = hexDigits.indexOf(currentCar);
+            if (position == -1)
+                throw "invalid hex digit found"
             //goes up in multiples of 16 each time
             //it gets higher up
             value = 16 * value + position;

@@ -49,6 +49,7 @@ describe("test logic class", () => {
     });
 
     it("get result", () => {
+
         const stack: ComputationStack[] = [
             {
                 operation: Operations.ADD,
@@ -80,6 +81,49 @@ describe("test logic class", () => {
         const c = new Calculator();
 
         expect(c.getResult(stack)).toBe("2FBE");
+        try {
+            expect(c.getResult([])).toThrow("Cannot calculate with len 0");
+        } catch (e) {
+            console.log(e);
+        }
+
+        try {
+            expect(c.getResult([{
+                operation: Operations.MULTIPLY,
+                value: "4"
+            }])).toThrow("Calculation must end with an empty operation")
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
+    it("toDec", () => {
+        const c = new Calculator();
+        expect(c.toDec("FF5")).toBe(4085);
+        expect(c.toDec("ABC")).toBe(2748);
+
+        try {
+            expect(c.toDec("G")).toThrow("invalid hex digit found")
+        } catch (e) {
+           console.log(e)
+        }
+
+        try {
+            expect(c.toDec("")).toThrow("invalid hex number")
+        } catch (e) {
+            console.log(e)
+        }
+    })
+
+    it("toHex", () => {
+        const c = new Calculator();
+        expect(c.toHex(456)).toBe("1C8");
+        expect(c.toHex(2045)).toBe("7FD");
+        try {
+            expect(c.toHex(-9)).toThrow("Cannot convert negatives")
+        } catch (e) {
+            console.log(e)
+        }
     })
 })
 
