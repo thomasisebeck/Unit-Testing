@@ -1,6 +1,6 @@
-import Calculator from "../logic/logic";
+import Calculator from "../../calculator/src/logic/logic";
 import {describe, expect, it} from "@jest/globals";
-import {ComputationStack, Operations} from "../logic/operations.ts";
+import {ComputationStack, Operations} from "../../calculator/src/logic/operations.ts";
 
 describe("test logic class", () => {
     it("add", () => {

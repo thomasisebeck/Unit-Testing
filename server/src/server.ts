@@ -5,6 +5,7 @@ import {MongoClient} from "mongodb";
 import 'dotenv';
 import dotenv from "dotenv";
 import cors from "cors"
+import Calculator from "./logic/logic";
 
 dotenv.config();
 
@@ -21,6 +22,18 @@ let client: MongoClient;
         process.exit(1)
     }
 })();
+
+app.post("/calculate", async (req, res) => {
+    try {
+        const c = new Calculator();
+        console.log(req.body);
+        const result = c.getResult(req.body);
+        res.status(200).send(result);
+    } catch (e) {
+        console.error(e);
+        res.status(204).send();
+    }
+})
 
 app.get("/history", async (req, res) => {
     if (!client)
