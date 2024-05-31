@@ -1,7 +1,6 @@
 import s from './App.module.scss'
 import {useState} from "react";
 import {ComputationStack, Operations} from "./logic/operations.ts";
-import Calculator from "./logic/logic.ts";
 
 function App() {
 
@@ -31,30 +30,70 @@ function App() {
 
     const computeStack = () => {
 
-        const c = new Calculator();
-        setlastComputationDisplay(display + " =");
-        setMustClearOnNextClick(true);
+        fetch(`http://localhost:3000/calculate`, {
+            method: 'POST',
+            body: JSON.stringify([...stack, {value: lastValue, operation: null}]),
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }).then(async response => {
+            if (response.status == 200) {
+                setDisplay(await response.text());
+                setCanSave(true);
+            } else if (response.status == 204) {
+                setDisplay("ERROR!")
 
-        try {
-            setDisplay(c.getResult([...stack, {value: lastValue, operation: null}]));
-            setCanSave(true);
-        } catch (e) {
-            setlastComputationDisplay("")
-            setIsAngry(true);
-            setDisplay("NO!");
+                setlastComputationDisplay("")
+                setIsAngry(true);
+                setDisplay("NO!");
+                setStack([]);
 
-            setStrokeCount(0);
-            const aud = new Audio('meow.mp3');
-            aud.play()
+                setStrokeCount(0);
+                const aud = new Audio('/meow.mp3');
+                aud.play();
 
-            setTimeout(() => {
-                setDisplay("")
-            }, 1000);
+                setTimeout(() => {
+                    setDisplay("")
+                }, 1000);
 
-            setTimeout(() => {
-                setIsAngry(false);
-            }, 2000);
-        }
+                setTimeout(() => {
+                    setIsAngry(false);
+                }, 2000);
+
+            } else {
+                console.log('SERVER ERROR');
+                console.log(response);
+            }
+        })
+
+        // const c = new Calculator();
+        // setlastComputationDisplay(display + " =");
+        // setMustClearOnNextClick(true);
+        //
+        // try {
+        //     setDisplay(c.getResult([...stack, {value: lastValue, operation: null}]));
+        //     setCanSave(true);
+        // } catch (e) {
+        //
+        //     console.log(e);
+        //     setlastComputationDisplay("")
+        //     setIsAngry(true);
+        //     setDisplay("NO!");
+        //     setStack([]);
+        //
+        //     setStrokeCount(0);
+        //     const aud = new Audio('/meow.mp3');
+        //     aud.play();
+        //
+        //     setTimeout(() => {
+        //         setDisplay("")
+        //     }, 1000);
+        //
+        //     setTimeout(() => {
+        //         setIsAngry(false);
+        //     }, 2000);
+        // }
     }
 
     const addToStack = (op: Operations) => {
@@ -151,7 +190,6 @@ function App() {
 
     const handleStroke = () => {
         setStrokeCount(strokeCount + 1);
-        console.log(strokeCount);
         if (strokeCount > 15) {
             setStrokeCount(0);
             const aud = new Audio('purr.mp3');

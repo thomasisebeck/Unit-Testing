@@ -1,5 +1,4 @@
-import './operations.ts'
-import {ComputationStack, Operations} from "./operations.ts";
+import {ComputationStack, Operations} from "./operations";
 
 export class Calculator {
     constructor() {
