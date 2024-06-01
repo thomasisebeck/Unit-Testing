@@ -13,8 +13,15 @@ function App() {
     const [retrieveEnabled, setRetrieveEnabled] = useState(false);
     const [isAngry, setIsAngry] = useState(false);
     const [strokeCount, setStrokeCount] = useState(0);
+    const [buttonsEnabled, setButtonsEnabled] = useState<boolean>(true);
+
+    const usedOperator = (): boolean => display.includes("+") || display.includes("-") || display.includes("*") || display.includes("/");
 
     const setLastHexValue = (val: string) => {
+
+        if (!buttonsEnabled)
+            return;
+
         setCanSave(false);
 
         if (mustClearOnNextClick) {
@@ -24,11 +31,26 @@ function App() {
             return;
         }
 
-        setDisplay(display + val);
+        const newVal = display + val;
+
+        setDisplay(newVal);
         setLastValue(lastValue + val);
+
+        if (newVal.length == 3) {//first 3 digits entered
+            console.log("disabling")
+            setButtonsEnabled(false);
+            console.log(buttonsEnabled);
+        }
+
+        if (display.includes(" ") && display.substring(display.indexOf(" "), display.length).length == 5) //last 3 digits entered
+            setButtonsEnabled(false);
+
     }
 
     const computeStack = () => {
+
+        resetToDefaults();
+        setMustClearOnNextClick(true);
 
         fetch(`http://localhost:3000/calculate`, {
             method: 'POST',
@@ -39,6 +61,7 @@ function App() {
             }
         }).then(async response => {
             if (response.status == 200) {
+                setlastComputationDisplay(display + "=")
                 setDisplay(await response.text());
                 setCanSave(true);
             } else if (response.status == 204) {
@@ -99,6 +122,8 @@ function App() {
     const addToStack = (op: Operations) => {
         if (lastValue == "")
             return;
+
+        setButtonsEnabled(true);
 
         switch (op) {
             case Operations.ADD:
@@ -197,15 +222,45 @@ function App() {
         }
     }
 
+    function operatorButton(op: Operations) {
+        let symbol = '';
+        switch (op) {
+            case Operations.ADD:
+                symbol = '+';
+                break;
+            case Operations.SUBTRACT:
+                symbol = '-';
+                break;
+            case Operations.MULTIPLY:
+                symbol = '*';
+                break;
+            case Operations.DIVIDE:
+                symbol = '/';
+                break;
+        }
+        return <div className={`${usedOperator() ? s.disabled : ""} ${s.operationButton}`}
+                    onClick={() => !usedOperator() && addToStack(op)}>{symbol}
+        </div>;
+    }
+
+    function resetToDefaults() {
+        setLastValue("");
+        setDisplay("");
+        setStack([]);
+        setlastComputationDisplay("");
+        setCanSave(false);
+        setButtonsEnabled(true);
+    }
+
     return (
         <div className={s.outer}>
-            <div className={[s.container, isAngry ? s.angry : '' ].join(' ')}>
+            <div className={[s.container, isAngry ? s.angry : ''].join(' ')}>
                 <div className={s.ears}>
                     <div className={s.earsPink}></div>
                     <div className={s.earsInner}></div>
                 </div>
                 <div className={s.screen}
-                    onMouseOut={() => handleStroke()}>
+                     onMouseOut={() => handleStroke()}>
 
                     <div id={"lastComputationDisplay"}>{lastComputationDisplay}</div>
                     <div id={"display"}>{display}</div>
@@ -214,54 +269,50 @@ function App() {
                 <div className={s.body}>
                     <div className={s.tools}>
                         <img src={'backspace.svg'}
-                             onClick={() => setDisplay(display.substring(0, display.length - 1))}/>
+                             onClick={() => {
+                                 setDisplay(display.substring(0, display.length - 1));
+                                 setButtonsEnabled(true);
+                             }}/>
                     </div>
-                    <div className={s.buttons}>
+                    <div className={`${s.buttons} ${!buttonsEnabled ? s.disabledButtons : ''}`}>
                         <div className={[s.large, !canSave ? s.disabled : ''].join(' ')}
                              onClick={() => canSave && saveToMemory()}>remember
                         </div>
                         <div className={[s.large, !retrieveEnabled ? s.disabled : ''].join(' ')}
-                             onClick={() => getLastHistory()}>recall
+                             onClick={() => buttonsEnabled && getLastHistory()}>recall
                         </div>
 
                         <div onClick={() => setLastHexValue("A")}>A</div>
                         <div onClick={() => setLastHexValue("B")}>B</div>
                         <div onClick={() => setLastHexValue("C")}>C</div>
 
-                        <div onClick={() => {
-                            setLastValue("");
-                            setDisplay("");
-                            setStack([]);
-                            setlastComputationDisplay("");
-                            setCanSave(false);
-                        }}>clear
+                        <div className={s.operationButton} onClick={() => resetToDefaults()}>clear
                         </div>
 
                         <div onClick={() => setLastHexValue("D")}>D</div>
                         <div onClick={() => setLastHexValue("E")}>E</div>
                         <div onClick={() => setLastHexValue("F")}>F</div>
-
-                        <div onClick={() => addToStack(Operations.ADD)}>+</div>
+                        {operatorButton(Operations.ADD)}
 
                         <div onClick={() => setLastHexValue("7")}>7</div>
                         <div onClick={() => setLastHexValue("8")}>8</div>
                         <div onClick={() => setLastHexValue("9")}>9</div>
-                        <div onClick={() => addToStack(Operations.MULTIPLY)}>x</div>
+                        {operatorButton(Operations.MULTIPLY)}
 
                         <div onClick={() => setLastHexValue("4")}>4</div>
                         <div onClick={() => setLastHexValue("5")}>5</div>
                         <div onClick={() => setLastHexValue("6")}>6</div>
-                        <div onClick={() => addToStack(Operations.SUBTRACT)}>-</div>
+                        {operatorButton(Operations.SUBTRACT)}
 
                         <div onClick={() => setLastHexValue("1")}>1</div>
                         <div onClick={() => setLastHexValue("2")}>2</div>
                         <div onClick={() => setLastHexValue("3")}>3</div>
-                        <div onClick={() => addToStack(Operations.DIVIDE)}>/</div>
+                        {operatorButton(Operations.DIVIDE)}
 
                         <div className={s.disabled}></div>
                         <div onClick={() => setLastHexValue("0")}>0</div>
                         <div className={s.disabled}></div>
-                        <div onClick={() => computeStack()}>=</div>
+                        <div className={s.equals} onClick={() => computeStack()}>=</div>
                     </div>
                 </div>
             </div>
