@@ -119,6 +119,8 @@ $border-rad: 7px;
   position: relative;
 }
 
+
+
 .body {
   background-color: $lemon;
   border-radius: 0 0 $border-rad $border-rad;
@@ -177,9 +179,6 @@ $border-rad: 7px;
       background-color: $button-hover;
     }
 
-    .disabled {
-      color: rgba(0, 0, 0, 0.44);
-    }
 
     .disabled:hover {
       background-color: $button !important;
@@ -195,3 +194,14 @@ $border-rad: 7px;
 
 
 
+.disabled, .disabledButtons > * {
+  color: rgba(0, 0, 0, 0.44);
+}
+
+.operationButton:not(.disabled) {
+  color: black;
+}
+
+.equals {
+  color: black;
+}

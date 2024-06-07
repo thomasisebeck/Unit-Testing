@@ -1,7 +1,7 @@
 import { pingDB, getHistory, clearHistory, addToHistory } from '../src/database'
 import { connectClient, closeClient } from '../src/connection'
 import {Document, MongoClient, WithId} from "mongodb";
-import any = jasmine.any;
+
 describe('test database', () => {
     let client: MongoClient;
 
@@ -20,7 +20,7 @@ describe('test database', () => {
     })
     it('can insert into database',  async () => {
         const record = {
-            'equation': '1 + 23 + 34433 = 3423'
+            'equation': '1 + 2 = 3'
         }
         const result = await addToHistory(client, record);
 
@@ -30,9 +30,9 @@ describe('test database', () => {
         expect(result.acknowledged).toBe(true);
 
         const records = [{
-            'equation': '1 + 43 + 34433 = 3423'
+            'equation': '2 + 3 = 5'
         }, {
-            'equation': '1 + 32 + 322 = 1232'
+            'equation': '4 + 5 = 9'
         }];
         const result2 = await addToHistory(client, records);
         if (result2 == false)
@@ -47,7 +47,7 @@ describe('test database', () => {
             return fail("result is null")
 
         //last inserted item
-        expect(result.document['equation']).toBe('1 + 32 + 322 = 1232');
+        expect(result.document['equation']).toBe('4 + 5 = 9');
 
         expect(result.canRetrieveMore).toBe(true);
 
@@ -57,7 +57,7 @@ describe('test database', () => {
 
         //last inserted item
         expect(result.document['equation']).toBe(
-           '1 + 43 + 34433 = 3423'
+           '2 + 3 = 5'
         )
 
         expect(result.canRetrieveMore).toBe(true);
@@ -67,15 +67,15 @@ describe('test database', () => {
             return fail("result is null")
 
         expect(result.document['equation']).toBe(
-            '1 + 23 + 34433 = 3423'
+            '1 + 2 = 3'
         )
 
         expect(result.canRetrieveMore).toBe(false);
 
         const records = [{
-            'equation': '1 + 43 + 34433 = 3423'
+            'equation': '1 + 43 = 44'
         }, {
-            'equation': '1 + 32 + 322 = 1232'
+            'equation': '1 + 32 = 33'
         }];
         const result2 = await addToHistory(client, records);
         expect(result2).not.toBe(false);
