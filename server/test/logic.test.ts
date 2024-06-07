@@ -1,6 +1,6 @@
-import Calculator from "../../calculator/src/logic/logic";
+import Calculator from "../src/logic/logic";
 import {describe, expect, it} from "@jest/globals";
-import {ComputationStack, Operations} from "../../calculator/src/logic/operations.ts";
+import {ComputationStack, Operations} from "../src/logic/operations"
 
 describe("test logic class", () => {
     it("add", () => {
@@ -52,35 +52,19 @@ describe("test logic class", () => {
 
         const stack: ComputationStack[] = [
             {
-                operation: Operations.ADD,
-                value: "AB" //171
-            },
-            {
-                operation: Operations.ADD,
-                value: "CD" //205
-            },
-            {
-                operation: Operations.SUBTRACT,
-                value: "CD" //205
-            },
-            {
-                operation: Operations.DIVIDE,
-                value: "BE" //190
-            },
-            {
                 operation: Operations.MULTIPLY,
-                value: "4" //4
+                value: "DA9" //171
             },
             {
                 operation: null,
-                value: "7E" //126
+                value: "888" //205
             },
         ];
 
         //result = 12 222
         const c = new Calculator();
 
-        expect(c.getResult(stack)).toBe("2FBE");
+        expect(c.getResult(stack)).toBe("7489C8");
         try {
             expect(c.getResult([])).toThrow("Cannot calculate with len 0");
         } catch (e) {

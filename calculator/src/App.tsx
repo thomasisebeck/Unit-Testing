@@ -64,7 +64,8 @@ function App() {
                 setlastComputationDisplay(display + "=")
                 setDisplay(await response.text());
                 setCanSave(true);
-            } else if (response.status == 204) {
+            }
+            else if (response.status == 204) {
                 setDisplay("ERROR!")
 
                 setlastComputationDisplay("")
@@ -84,7 +85,8 @@ function App() {
                     setIsAngry(false);
                 }, 2000);
 
-            } else {
+            }
+            else {
                 console.log('SERVER ERROR');
                 console.log(response);
             }
