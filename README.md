@@ -1,4 +1,8 @@
-# Functional Requirements
+# Calculator developed with test-driven development
+
+This is a MERN stack application which uses Jest and Cypress to perform unit and end-to-end tests.
+
+## Functional Requirements
 | category     | requirement                                       |
 | ------------ | ------------------------------------------------- |
 | Arithmetic   | Addition                                          |
