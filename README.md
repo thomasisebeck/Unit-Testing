@@ -2,6 +2,8 @@
 
 This is a MERN stack application which uses Jest and Cypress to perform unit and end-to-end tests.
 
+![showcase](https://github.com/user-attachments/assets/d05097b9-93cb-414e-a8ec-8c938e2ecbae)
+
 ## Functional Requirements
 | category     | requirement                                       |
 | ------------ | ------------------------------------------------- |
